@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. Get ID from URL
+    // 1. Get ID from URL or Global Variable
     const urlParams = new URLSearchParams(window.location.search);
-    const receiptId = urlParams.get('id') || '10'; // Default to 10 if not specified
+    const receiptId = window.receiptId || urlParams.get('id') || '10'; // Prioritize global var, then URL, then default
 
     // 2. Fetch Data
     const data = receiptData[receiptId];
