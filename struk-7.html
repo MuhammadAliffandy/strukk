@@ -32,20 +32,24 @@
             justify-content: center;
             align-items: center;
             padding-top: 20px;
+            /* Padding layar view only */
         }
 
         /* --- 3. KONTAINER STRUK UTAMA --- */
         .struk {
-            /* Responsive Width */
+            /* Responsive Width: 100% mengikuti kertas printer */
             width: 100%;
             margin: 0 auto;
             padding: 5px 2px;
             background-color: #fff;
             color: #2a2a72;
-            font-size: 13pt;
+            font-size: 11pt;
+            /* Sedikit dikecilkan agar aman di 58mm */
             line-height: 1.2;
             text-transform: uppercase;
             box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            /* Mencegah scrollbar */
         }
 
         /* --- 4. KOMPONEN UMUM --- */
@@ -65,7 +69,7 @@
 
         .meta-info {
             margin-top: 5px;
-            font-size: 13pt;
+            font-size: 11pt;
         }
 
         /* PERBAIKAN CUSTOMER ROW (Space Between) */
@@ -76,22 +80,24 @@
             margin-top: 2px;
         }
 
-        /* GARIS PEMISAH RESPONSIVE (CSS Border) */
+        /* GARIS PEMISAH RESPONSIVE (TEXT LOOK - DYNAMIC JS) */
+        /* Kontainer tetap overflow hidden agar responsif */
         .separator {
-            margin: 5px 0;
             width: 100%;
-            display: block;
+            overflow: hidden;
+            /* Potong kelebihan karakter */
+            white-space: nowrap;
+            /* Pastikan satu baris */
+            margin: 5px 0;
+            line-height: 1;
+            font-weight: bold;
         }
 
+        /* Hapus pseudo-element content karena sekarang di-handle JS */
         #sep-1,
+        #sep-2,
         #sep-3 {
-            border-bottom: 3px double #000;
-            /* ================= */
-        }
-
-        #sep-2 {
-            border-bottom: 1px dashed #000;
-            /* ----------------- */
+            border: none;
         }
 
         /* --- 5. ITEM BELANJA (DIPERBAIKI) --- */
@@ -101,19 +107,22 @@
 
         .item-name {
             display: block;
+            word-wrap: break-word;
+            /* Mencegah teks panjang merusak layout */
         }
 
         .item-detail {
             display: flex;
             justify-content: space-between;
-            padding-left: 20px;
-            font-size: 13pt;
+            padding-left: 10px;
+            /* Kurangi padding agar muat di kertas kecil */
+            font-size: 11pt;
         }
 
         /* Group Kiri */
         .detail-left {
             display: flex;
-            gap: 5px;
+            gap: 3px;
         }
 
         /* Group Kanan */
@@ -128,7 +137,7 @@
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 5px;
-            font-size: 13pt;
+            font-size: 11pt;
         }
 
         .summary-table td {
@@ -138,19 +147,21 @@
         }
 
         .col-label {
-            width: 10%;
+            width: 25%;
+            /* Lebarkan label agar tidak terjepit */
             text-align: left;
-            padding-left: 105px;
+            padding-left: 20px;
+            /* Sesuaikan indentasi */
         }
 
         .col-curr {
-            width: 8%;
+            width: 10%;
             text-align: right;
             padding-right: 2px;
         }
 
         .col-val {
-            width: 35%;
+            width: 30%;
             text-align: right;
         }
 
@@ -162,7 +173,7 @@
         .footer-items {
             display: flex;
             justify-content: space-between;
-            margin: 5px 25px 15px 25px;
+            margin: 5px 10px;
         }
 
         .footer-msg {
@@ -177,9 +188,7 @@
                 background: none;
                 margin: 0;
                 padding: 0;
-                display: flex;
-                justify-content: center;
-                align-items: center;
+                display: block;
             }
 
             .struk {
@@ -188,8 +197,21 @@
                 max-width: none;
                 margin: 0;
                 padding: 0 1mm;
+                /* Margin tipis aman */
                 box-shadow: none;
                 border: none;
+                font-size: 10pt;
+                /* Ukuran font aman untuk print */
+            }
+
+            .header-toko {
+                font-size: 12pt;
+            }
+
+            .meta-info,
+            .item-detail,
+            .summary-table {
+                font-size: 10pt;
             }
         }
     </style>
@@ -270,8 +292,75 @@
     <script src="js/receipt-data.js"></script>
     <script>
         window.receiptId = '7';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // 1. Get ID from URL or Global Variable
+            const urlParams = new URLSearchParams(window.location.search);
+            const receiptId = window.receiptId || urlParams.get('id') || '10';
+
+            // 2. Fetch Data
+            const data = receiptData[receiptId];
+
+            if (!data) {
+                document.body.innerHTML = '<h2 style="color:red; text-align:center;">Receipt not found!</h2>';
+                return;
+            }
+
+            // 3. Render Header Info
+            document.getElementById('store-name').textContent = data.storeName;
+            document.getElementById('store-location').textContent = data.storeLocation;
+            document.getElementById('customer-id').textContent = data.customerId;
+            document.getElementById('transaction-date').textContent = data.transactionDate;
+
+            // 4. Render Separators (Dynamic View)
+            // FIXED: Using 1000 chars to ensure full width on ALL screens (including 4K)
+            const doubleLine = "=".repeat(1000);
+            const dashedLine = "-".repeat(1000);
+
+            document.getElementById('sep-1').textContent = doubleLine;
+            document.getElementById('sep-2').textContent = dashedLine;
+            document.getElementById('sep-3').textContent = doubleLine;
+
+            // 5. Render Items
+            const itemsContainer = document.getElementById('items-container');
+            itemsContainer.innerHTML = '';
+
+            data.items.forEach(item => {
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'item';
+
+                itemDiv.innerHTML = `
+                    <div class="item-name">${item.name}</div>
+                    <div class="item-detail">
+                        <div class="detail-left">
+                            <span>${item.qty}</span>
+                            <span>${item.price}</span>
+                            <span>=Rp</span>
+                        </div>
+                        <div class="detail-right">
+                            <span>${item.total}</span>
+                        </div>
+                    </div>
+                `;
+                itemsContainer.appendChild(itemDiv);
+            });
+
+            // 6. Render Totals
+            document.getElementById('total-qty').textContent = data.totals.qty;
+            document.getElementById('total-amount').textContent = data.totals.total;
+            document.getElementById('discount-amount').textContent = data.totals.discount;
+
+            const payRow = data.totals.models.find(m => m.label === 'BAYAR');
+            const changeRow = data.totals.models.find(m => m.label === 'KEMBALI');
+
+            if (payRow) document.getElementById('paid-amount').textContent = payRow.val;
+            if (changeRow) document.getElementById('change-amount').textContent = changeRow.val;
+
+            // 7. Render Footer
+            document.getElementById('items-count').textContent = data.footer.itemsCount;
+            document.getElementById('cashier-name').textContent = data.footer.cashierName;
+        });
     </script>
-    <script src="js/render-receipt.js"></script>
 </body>
 
 </html>

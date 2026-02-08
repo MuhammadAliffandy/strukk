@@ -18,10 +18,13 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('transaction-date').textContent = data.transactionDate;
 
     // 4. Render Separators (Dynamic View)
-    // Handled by CSS borders for responsiveness
-    // document.getElementById('sep-1').className += ' double';
-    // document.getElementById('sep-2').className += ' dashed';
-    // document.getElementById('sep-3').className += ' double';
+    // Generating long strings to ensure they cover full width (CSS overflow:hidden will clip them)
+    const doubleLine = "=".repeat(80);
+    const dashedLine = "-".repeat(80);
+
+    document.getElementById('sep-1').textContent = doubleLine;
+    document.getElementById('sep-2').textContent = dashedLine;
+    document.getElementById('sep-3').textContent = doubleLine;
 
     // 5. Render Items
     const itemsContainer = document.getElementById('items-container');
