@@ -18,13 +18,10 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('transaction-date').textContent = data.transactionDate;
 
     // 4. Render Separators (Dynamic View)
-    // User requested "separated dash nya juga harus dynamic view"
-    // We generate the string here.
-    const separatorString = "===============================================";
-    const separatorDash = "-----------------------------------------------";
-    document.getElementById('sep-1').textContent = separatorString;
-    document.getElementById('sep-2').textContent = separatorDash;
-    document.getElementById('sep-3').textContent = separatorString;
+    // Handled by CSS borders for responsiveness
+    // document.getElementById('sep-1').className += ' double';
+    // document.getElementById('sep-2').className += ' dashed';
+    // document.getElementById('sep-3').className += ' double';
 
     // 5. Render Items
     const itemsContainer = document.getElementById('items-container');

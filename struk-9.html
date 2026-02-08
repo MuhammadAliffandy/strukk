@@ -13,7 +13,8 @@
     <style>
         /* --- 1. SETUP HALAMAN & KERTAS --- */
         @page {
-            size: 75mm auto;
+            size: auto;
+            /* Biarkan printer mengatur ukuran kertas */
             margin: 0mm;
         }
 
@@ -21,7 +22,6 @@
         * {
             box-sizing: border-box;
             margin: 0;
-            /* JANGAN PAKAI AUTO DISINI, NANTI FLEXBOX RUSAK */
             padding: 0;
         }
 
@@ -36,15 +36,13 @@
 
         /* --- 3. KONTAINER STRUK UTAMA --- */
         .struk {
-            /* Pastikan width ini pas dengan printer */
-            width: 68mm;
+            /* Responsive Width */
+            width: 100%;
             margin: 0 auto;
-            /* Center struk di layar browser */
             padding: 5px 2px;
             background-color: #fff;
             color: #2a2a72;
             font-size: 13pt;
-            /* Ukuran font disesuaikan agar muat sebaris */
             line-height: 1.2;
             text-transform: uppercase;
             box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
@@ -74,19 +72,26 @@
         .customer-row {
             display: flex;
             justify-content: space-between;
-            /* Kiri - Kanan Mentok */
             width: 100%;
-            /* Pastikan lebar penuh */
             margin-top: 2px;
         }
 
-        /* GARIS PEMISAH */
+        /* GARIS PEMISAH RESPONSIVE (CSS Border) */
         .separator {
-            margin: 3px 0;
-            font-weight: bold;
-            text-align: center;
-            white-space: nowrap;
-            overflow: hidden;
+            margin: 5px 0;
+            width: 100%;
+            display: block;
+        }
+
+        #sep-1,
+        #sep-3 {
+            border-bottom: 3px double #000;
+            /* ================= */
+        }
+
+        #sep-2 {
+            border-bottom: 1px dashed #000;
+            /* ----------------- */
         }
 
         /* --- 5. ITEM BELANJA (DIPERBAIKI) --- */
@@ -101,26 +106,21 @@
         .item-detail {
             display: flex;
             justify-content: space-between;
-            /* Memisahkan Kiri (Qty) dan Kanan (Total) */
             padding-left: 20px;
-            /* Indentasi menjorok */
             font-size: 13pt;
         }
 
-        /* Group Kiri: 2 KRTx 170.004 */
+        /* Group Kiri */
         .detail-left {
             display: flex;
             gap: 5px;
-            /* Jarak antar angka */
         }
 
-        /* Group Kanan: =Rp 340.008 */
+        /* Group Kanan */
         .detail-right {
             display: flex;
             gap: 2px;
-            /* Jarak antara =Rp dan Angka */
             white-space: nowrap;
-            /* Supaya tidak turun baris */
         }
 
         /* --- 6. TABEL TOTALAN --- */
@@ -137,22 +137,18 @@
             vertical-align: top;
         }
 
-        /* Kolom Label (TOTAL, BAYAR) */
         .col-label {
             width: 10%;
             text-align: left;
             padding-left: 105px;
-            /* Menjorok ke tengah */
         }
 
-        /* Kolom Mata Uang / QNT */
         .col-curr {
             width: 8%;
             text-align: right;
             padding-right: 2px;
         }
 
-        /* Kolom Angka */
         .col-val {
             width: 35%;
             text-align: right;
@@ -175,15 +171,6 @@
             line-height: 1.3;
         }
 
-        .signature-area {
-            margin-top: 15px;
-            font-family: 'Brush Script MT', cursive;
-            font-size: 24px;
-            transform: rotate(-10deg);
-            width: 100px;
-            margin-left: 10px;
-        }
-
         /* --- 8. SETTING PRINT --- */
         @media print {
             body {
@@ -196,9 +183,10 @@
             }
 
             .struk {
-                width: 68mm;
-                max-width: 68mm;
-                margin: 0 auto;
+                width: 100%;
+                /* Full width of paper */
+                max-width: none;
+                margin: 0;
                 padding: 0 1mm;
                 box-shadow: none;
                 border: none;
@@ -270,8 +258,6 @@
             <span id="items-count"></span>
             <span id="cashier-name"></span>
         </div>
-
-        <!-- <div class="signature-area">Ardi</div> -->
 
         <div class="footer-msg">
             BARANG YANG SUDAH DI BELI<br>
